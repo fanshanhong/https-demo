@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/okhttp_http_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用OkHttp请求HTTP数据" />
+
+    <Button
+        android:id="@+id/urlconnection_http_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用UrlConnection请求HTTP数据" />
+
+    <Button
+        android:id="@+id/urlconnection_https_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用UrlConnection请求HTTPS数据" />
+    getSafeFromServer
+    <Button
+        android:id="@+id/get_safe_from_server_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用预埋的证书来生成TrustManger的方式请求HTTPS数据" />
+    <Button
+        android:id="@+id/get_safe_from_server_button_sample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用自行验签的方式获取HTTPS数据" />
+    <Button
+        android:id="@+id/check_self"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="check_self" />
+</LinearLayout>
