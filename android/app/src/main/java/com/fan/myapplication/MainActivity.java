@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -34,6 +35,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 使用 OkHttp 获取Http数据
+     *
      * @throws Exception
      */
     public void getHttpDataByOkhttp() throws Exception {
@@ -189,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 使用 HTTPUrlConnection 获取 http 数据
+     *
      * @throws Exception
      */
     public void getHttpDataByUrlConnection() throws Exception {
@@ -249,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 使用 HttpsUrlConnection 获取 Https 数据
+     *
      * @throws Exception
      */
     public void getHttpsDataByUrlConnection() throws Exception {
@@ -293,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 用预埋证书来生成 TrustManger, 然后获取 Https 数据
+     *
      * @throws Exception
      */
     public void getSafeFromServer() throws Exception {
@@ -343,19 +349,19 @@ public class MainActivity extends AppCompatActivity {
         conn.setSSLSocketFactory(sslSocketFactory);
 
 
-        // 这里不要自己写, 用自带的就好了
-        conn.setHostnameVerifier(STRICT_HOSTNAME_VERIFIER);
-//        conn.setHostnameVerifier(new HostnameVerifier() {
-//            @Override
-//            public boolean verify(String hostname, SSLSession sslSession) {
-//                if ("192.168.110.42".equals(hostname)) {
-//                    return true;
-//                } else {
-//                    HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-//                    return hv.verify(hostname, sslSession);
-//                }
-//            }
-//        });
+        // 这里使用 自带的 STRICT_HOSTNAME_VERIFIER 就会报错:HTTPS Hostname  not verified
+        // conn.setHostnameVerifier(STRICT_HOSTNAME_VERIFIER);
+        conn.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession sslSession) {
+                if ("192.168.110.110".equals(hostname)) {
+                    return true;
+                } else {
+                    HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
+                    return hv.verify(hostname, sslSession);
+                }
+            }
+        });
 
         InputStream inputStream;
         int status = conn.getResponseCode();
@@ -372,6 +378,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MMMMM", "getSafeFromServer: " + result);
 
         inputStream.close();
+
+
+
+        // 写上 .hostnameVerifier(STRICT_HOSTNAME_VERIFIER) 就报错:HTTPS Hostname  not verified
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder().sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
+        OkHttpClient client = builder.build();
+        Request request = new Request.Builder().url(httpsPath).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println(response.body().string());
+            }
+        });
+
 
     }
 
